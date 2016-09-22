@@ -1,4 +1,6 @@
-# Logger for Redux
+# Logger for Fluxible
+This is a fork of the redux-logger to make it work with fluxible. It works in a similar way, but not all options are available (no predicate option yet).
+
 [![Build Status](https://travis-ci.org/evgenyrodionov/redux-logger.svg?branch=master)](https://travis-ci.org/evgenyrodionov/redux-logger)
 
 ![redux-logger](http://i.imgur.com/pMR3OAv.png)
