@@ -1,12 +1,27 @@
+function getStoreNamesByActionType(stores, type) {
+  return stores
+    .map((store) => ({ types: Object.keys(store.handlers), name: store.storeName }))
+    .filter((store) => store.types.filter((ty) => ty === type).length > 0)
+    .map((store) => store.name)
+    .filter((value, index, el) => el.indexOf(value) === index);
+}
+
+function getStates(storeNames = [], actionContext) {
+  return storeNames.reduce((acc, name) => ({
+    ...acc,
+    [name]: actionContext.getStore(name).state,
+  }), {});
+}
+
 export default {
   level: `log`,
   logger: console,
   logErrors: true,
-  collapsed: undefined,
+  collapsed: true,
   predicate: undefined,
-  duration: false,
+  duration: true,
   timestamp: true,
-  stateTransformer: state => state,
+  stateTransformer: (stores, type, actionContext) => getStates(getStoreNamesByActionType(stores, type), actionContext),
   actionTransformer: action => action,
   errorTransformer: error => error,
   colors: {

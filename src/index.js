@@ -6,6 +6,7 @@ import defaults from './defaults';
  * Creates logger with following options
  *
  * @namespace
+ * @param {object} stores - stores to look for
  * @param {object} options - options for logger
  * @param {string | function | object} options.level - console[level]
  * @param {boolean} options.duration - print duration of each action?
@@ -21,7 +22,7 @@ import defaults from './defaults';
  *
  * @returns {function} logger middleware
  */
-function createLogger(options = {}) {
+function createLogger(stores, options = {}) {
   const loggerOptions = {
     ...defaults,
     ...options,
@@ -30,8 +31,7 @@ function createLogger(options = {}) {
   const {
     logger,
     transformer, stateTransformer, errorTransformer,
-    predicate, logErrors,
-    diffPredicate,
+    logErrors,
   } = loggerOptions;
 
   // Return if 'console' object is not defined
@@ -45,35 +45,30 @@ function createLogger(options = {}) {
 
   const logBuffer = [];
 
-  return ({ getState }) => (next) => (action) => {
-    // Exit early if predicate function returns 'false'
-    if (typeof predicate === `function` && !predicate(getState, action)) {
-      return next(action);
-    }
-
+  return (actionContext) => (next) => (type, payload) => {
     const logEntry = {};
     logBuffer.push(logEntry);
 
     logEntry.started = timer.now();
     logEntry.startedTime = new Date();
-    logEntry.prevState = stateTransformer(getState());
-    logEntry.action = action;
+    logEntry.prevState = stateTransformer(stores, type, actionContext);
+    logEntry.action = { type, payload };
 
     let returnedValue;
     if (logErrors) {
       try {
-        returnedValue = next(action);
+        returnedValue = next(type, payload);
       } catch (e) {
         logEntry.error = errorTransformer(e);
       }
     } else {
-      returnedValue = next(action);
+      returnedValue = next(type, payload);
     }
 
     logEntry.took = timer.now() - logEntry.started;
-    logEntry.nextState = stateTransformer(getState());
+    logEntry.nextState = stateTransformer(stores, type, actionContext);
 
-    const diff = loggerOptions.diff && typeof diffPredicate === `function` ? diffPredicate(getState, action) : loggerOptions.diff;
+    const diff = loggerOptions.diff;
 
     printBuffer(logBuffer, { ...loggerOptions, diff });
     logBuffer.length = 0;

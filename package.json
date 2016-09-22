@@ -1,21 +1,20 @@
 {
-  "name": "redux-logger",
-  "version": "2.6.1",
-  "description": "Logger for Redux",
-  "main": "lib/index.js",
+  "name": "fluxible-logger",
+  "version": "0.1.2",
+  "description": "Logger for Fluxible",
+  "main": "dist/index.min.js",
   "scripts": {
     "lint": "$(npm bin)/eslint src",
     "test": "npm run lint",
     "clean": "$(npm bin)/rimraf dist lib",
     "build:lib": "$(npm bin)/babel src --out-dir lib",
-    "build:umd": "LIBRARY_NAME=reduxLogger NODE_ENV=development $(npm bin)/webpack src/index.js dist/index.js --config webpack.build.js",
-    "build:umd:min": "LIBRARY_NAME=reduxLogger NODE_ENV=production $(npm bin)/webpack -p src/index.js dist/index.min.js --config webpack.build.js",
+    "build:umd": "LIBRARY_NAME=fluxibleLogger NODE_ENV=development $(npm bin)/webpack src/index.js dist/index.js --config webpack.build.js",
+    "build:umd:min": "LIBRARY_NAME=fluxibleLogger NODE_ENV=production $(npm bin)/webpack -p src/index.js dist/index.min.js --config webpack.build.js",
     "build": "npm run build:lib && npm run build:umd && npm run build:umd:min",
-    "prepublish": "npm run clean && npm run test && npm run build"
+    "preparepublish": "npm run clean && npm run test && npm run build"
   },
   "files": [
     "dist",
-    "lib",
     "src"
   ],
   "repository": {
@@ -23,10 +22,9 @@
     "url": "git+https://github.com/theaqua/redux-logger.git"
   },
   "keywords": [
-    "redux",
+    "fluxible",
     "logger",
-    "redux-logger",
-    "redux",
+    "fluxible-logger",
     "middleware"
   ],
   "author": "Eugene Rodionov (https://github.com/theaqua)",
